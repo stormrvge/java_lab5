@@ -1,6 +1,0 @@
-help
-show
-show
-show
-info
-execute_script script.txt
