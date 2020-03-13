@@ -1,5 +1,9 @@
 # Default ignored files
 /workspace.xml
-/saved
-/JavaDoc
-/.idea
+saved/
+JavaDoc/
+.idea/
+out/
+lab5.iml
+script.txt
+source.json
