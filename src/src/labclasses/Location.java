@@ -1,4 +1,4 @@
-package src;
+package src.labclasses;
 
 /**
  * Class which we using like a field in collection. Contains 3 coordinates.
@@ -15,7 +15,7 @@ public class Location {
      * @param z - Z coordinate.
      * @throws NullPointerException - throws exception, if X or Y coordinates equal null.
      */
-    Location(Float x, Integer y, int z) throws NullPointerException {
+    public Location(Float x, Integer y, int z) throws NullPointerException {
         if (x == null || y == null) throw new NullPointerException();
 
         this.x = x;
@@ -66,4 +66,9 @@ public class Location {
      * @param z - coordinate which we want to set.
      */
     public void setZ(int z) {this.z = z;}
+
+    @Override
+    public String toString() {
+        return ("{x: " + x + ", y: " + y + ", z: " + z + "}");
+    }
 }

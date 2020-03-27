@@ -1,7 +1,8 @@
-package src;
+package src.commands;
 
 import src.commands.Command;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -10,7 +11,7 @@ import java.util.HashMap;
  */
 public class Invoker {
     private final HashMap<String, Command> commandMap = new HashMap<>();
-    Invoker() {}
+    public Invoker() {}
 
     /**
      * This method registering new commands to invoker.
@@ -28,24 +29,21 @@ public class Invoker {
     public void execute(String commandName) {
         try {
             if(commandName.equals("")) {
-                throw new Exception();
+                throw new NullPointerException();
             } else {
+                commandName = commandName.replace("\t", " ").trim();
                 String[] commandName_split = commandName.split(" ");
                 Command  command = commandMap.get(commandName_split[0]);
-
                 if (command == null) {
-                    throw new Exception();
+                    throw new NullPointerException();
                 } else {
-                    try {
-                        command.execute(commandName_split);
-                    } catch (OutOfBoundsException e) {
-                        System.err.println("Out Of Bounds! Check your field!");
-                    }
-
+                    command.execute(commandName_split);
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             System.err.println("Calling unregistered command!");
+        } catch (IOException e) {
+            System.err.println("IOException!");
         }
     }
 }

@@ -5,13 +5,11 @@ import src.*;
 /**
  * This class of info command. This class just call method from Control Unit.
  */
-public class Command_info implements Command {
-    private final ControlUnit controlUnit;
-    private Collection collection;
+public class CommandInfo implements Command {
+    private final CollectionManager collectionManager;
 
-    public Command_info(ControlUnit controlUnit, Collection collection) {
-        this.controlUnit = controlUnit;
-        this.collection = collection;
+    public CommandInfo(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -20,6 +18,6 @@ public class Command_info implements Command {
      */
     @Override
     public void execute(String[] str) {
-        controlUnit.info(collection);
+        collectionManager.info();
     }
 }

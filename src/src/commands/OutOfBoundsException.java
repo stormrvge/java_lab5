@@ -1,10 +1,10 @@
-package src;
+package src.commands;
 
 /**
  * Exception class which uses for coordinates and locations.
  */
 public class OutOfBoundsException extends Exception {
-    OutOfBoundsException() {
+    public OutOfBoundsException() {
         super("Out of bounds");
     }
 }

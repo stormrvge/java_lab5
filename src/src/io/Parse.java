@@ -1,4 +1,10 @@
-package src;
+package src.io;
+
+import src.CollectionManager;
+import src.commands.OutOfBoundsException;
+import src.labclasses.Coordinates;
+import src.labclasses.Location;
+import src.labclasses.Route;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -32,37 +38,8 @@ public class Parse {
      * @throws OutOfBoundsException - throws exception, if coordinates or location are have out of bounds values.
      */
     public static ArrayList<Route> parseFromJSON(String pathToFile) throws IOException, OutOfBoundsException {
-        Path path = Paths.get(pathToFile);
-        InputStreamReader in = new InputStreamReader(new FileInputStream(String.valueOf(path)));
-        int line;
-        String str = "";
-        while ((line = in.read()) != EOF) {
-            if (line != NEW_LINE && line != CARRIAGE_RETURN && line != SPACE
-                    &&  line != QUOTES &&
-                    line != LEFT_SQUARE_BRACE && line != RIGHT_SQUARE_BRACE && line != HORIZONTAL_TAB) {
-                str += (char) line;
-            }
-        }
-        return parser(str);
-    }
-
-    /**
-     * This method parses array of strings into ArrayList of objects.
-     * @param str - arrays of strings with fields and values.
-     * @return - returns ArrayList.
-     * @throws OutOfBoundsException - throws exception, if coordinates or location are have out of bounds values.
-     * @throws NullPointerException - throws exception, if Location From fields equals null.
-     */
-    static private ArrayList<Route> parser(String str) throws OutOfBoundsException, NullPointerException {
-        String[] arr = str.split("[:,{}]");
-        List<String> removeSpaces = new ArrayList<>();
-        for (String s : arr) {
-            if ((s != null && s.length() > 0)) {
-                removeSpaces.add(s);
-            }
-        }
-        arr = removeSpaces.toArray(new String[0]);
-
+        String[] arr = textDecorate(pathToFile);
+        ZoneId zoneId = ZoneId.systemDefault();
         int num = 0;
         for (String s : arr) {
             if (s.equals("name")) num++;
@@ -75,26 +52,19 @@ public class Parse {
             for (int j = 0; arr.length > j; j++) {
                 try {
                     if (arr[j].equals("name") && !arr[j + 1].equals("coordinates")) {
-                        route[i].setName("hello"); //arr[j + 1]
+                        route[i].setName(arr[j + 1]);
                     }
-                    else if (arr[j].equals("name"))
-                        route[i].setName(null);
-                } catch (NullPointerException e) {
-                    return new ArrayList<>();
-                }
+                } catch (NullPointerException e) { return new ArrayList<>(); }
 
                 try {
                     if (arr[j].equals("coordinates")) {
                         route[i].setCoordinates(new Coordinates(Double.parseDouble(arr[j + 2]),
                                 Double.parseDouble(arr[j + 4])));
                     }
-                    } catch (NullPointerException | NumberFormatException e) {
-                        return new ArrayList<>();
-                    }
+                } catch (NullPointerException | NumberFormatException e) { return new ArrayList<>(); }
 
                 try {
                     if (arr[j].equals("creationDate")) {
-                        ZoneId zoneId = ZoneId.systemDefault();
                         String[] date;
                         date = arr[j + 1].split("-");
                         java.time.ZonedDateTime time = ZonedDateTime.of(Integer.parseInt(date[0]),
@@ -121,9 +91,9 @@ public class Parse {
                     route[i].setDistance(Float.parseFloat(arr[j + 1]));
                     route[i].setId();
                     if (route[i].getName() == null || route[i].getCoordinates() == null ||
-                         route[i].getFrom() == null ||
-                         route[i].getCreationDate() == null) {
-                         System.err.println("The " + (i + 1) + " element incorrect!");
+                            route[i].getFrom() == null ||
+                            route[i].getCreationDate() == null) {
+                        System.err.println("The " + (i + 1) + " element incorrect!");
                     }
                     else {
                         routeList.add(route[i]);
@@ -145,7 +115,8 @@ public class Parse {
      * @throws NoSuchFieldException - throws exception, if we don't have elements in collection,
      * needs for parse a class type.
      */
-    static public void parseToJSON(String path, Collection collection) throws IOException, NoSuchFieldException {
+    static public void parseToJSON(String path, ArrayList<Route> collection, java.time.ZonedDateTime dateTime)
+            throws IOException, NoSuchFieldException {
         Path pathToFile = Paths.get(path);
 
         BufferedOutputStream bos;
@@ -153,21 +124,24 @@ public class Parse {
         fos = new FileOutputStream(String.valueOf(pathToFile));
         bos = new BufferedOutputStream(fos);
 
-        Route[] route = new Route[collection.getCollectionSize()];
+        Route[] route = new Route[collection.size()];
         for (int i = 0; i < route.length; i++) {
-            route[i] = collection.readElementByIndex(i);
+            route[i] = collection.get(i);
         }
         String str;
         String additionalStr;
 
 
-        Field arrayListField = Collection.class.getDeclaredField("route");
+        Field arrayListField = CollectionManager.class.getDeclaredField("route");
         String arrayListType = arrayListField.getGenericType().getTypeName();
         arrayListType = arrayListType.replace("<", " ");
         arrayListType = arrayListType.replace(">", " ");
         String[] className = arrayListType.split("[ .]");
 
-        str = "{\n  \"" + className[4] + "\":[";
+        String initDate = dateTime.getYear() + "-" + dateTime.getMonthValue() + "-" + dateTime.getDayOfMonth();
+
+        str = "{" + "\n  \"initializing_date\":" + "\"" + initDate + "\"," +
+                "\n  \"" + className[5] + "\":[";
         bos.write(str.getBytes(), 0, str.length());
         for (int i = 0; i < route.length; i++)
         {
@@ -188,12 +162,12 @@ public class Parse {
                     "\n\t  \"z\":" + from.getZ() +
                     "\n\t},";
             if (to != null)
-            str += "\n\t\"to\":{" +
-                    "\n\t  \"x\":" + to.getX() + "," +
-                    "\n\t  \"y\":" + to.getY() + "," +
-                    "\n\t  \"z\":" + to.getZ() +
-                    "\n\t}," +
-                    "\n\t\"distance\":" + route[i].getDistance();
+                str += "\n\t\"to\":{" +
+                        "\n\t  \"x\":" + to.getX() + "," +
+                        "\n\t  \"y\":" + to.getY() + "," +
+                        "\n\t  \"z\":" + to.getZ() +
+                        "\n\t}," +
+                        "\n\t\"distance\":" + route[i].getDistance();
             else {
                 str += "\n\t\"to\":null," +
                         "\n\t\"distance\":" + route[i].getDistance();
@@ -227,5 +201,48 @@ public class Parse {
             }
         }
         return str.split("\n");
+    }
+
+    private static String[] textDecorate(String pathToFile) throws IOException {
+        Path path = Paths.get(pathToFile);
+        InputStreamReader in = new InputStreamReader(new FileInputStream(String.valueOf(path)));
+        int line;
+        String str = "";
+        while ((line = in.read()) != EOF) {
+            if (line != NEW_LINE && line != CARRIAGE_RETURN && line != SPACE
+                    &&  line != QUOTES &&
+                    line != LEFT_SQUARE_BRACE && line != RIGHT_SQUARE_BRACE && line != HORIZONTAL_TAB) {
+                str += (char) line;
+            }
+        }
+        String[] arr = str.split("[:,{}]");
+        List<String> removeSpaces = new ArrayList<>();
+        for (String s : arr) {
+            if ((s != null && s.length() > 0)) {
+                removeSpaces.add(s);
+            }
+        }
+        arr = removeSpaces.toArray(new String[0]);
+        return arr;
+    }
+
+    public static java.time.ZonedDateTime getInitDate(String pathToFile) throws IOException {
+        String[] arr = textDecorate(pathToFile);
+        String[] date = new String[3];
+        java.time.ZonedDateTime initDate;
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].equals("initializing_date") && !arr[i + 1].equals("Route")) {
+                date[0] = arr[i + 1];
+                date = date[0].split("-");
+                break;
+            }
+            else throw new NullPointerException();
+        }
+        initDate = ZonedDateTime.of(Integer.parseInt(date[0]),
+                Integer.parseInt(date[1]), Integer.parseInt(date[2]), 0, 0,
+                0, 0, zoneId);
+        return initDate;
     }
 }

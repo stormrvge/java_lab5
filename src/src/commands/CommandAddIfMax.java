@@ -5,14 +5,12 @@ import src.*;
 /**
  * This class of add_if_max command. This class just call method from Control Unit.
  */
-public class Command_add_if_max implements Command {
-    private ControlUnit controlUnit;
-    private Collection collection;
+public class CommandAddIfMax implements Command {
+    private CollectionManager collectionManager;
 
 
-    public Command_add_if_max(ControlUnit controlUnit, Collection collection) {
-        this.controlUnit = controlUnit;
-        this.collection = collection;
+    public CommandAddIfMax(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -21,6 +19,6 @@ public class Command_add_if_max implements Command {
      */
     @Override
     public void execute(String ... args) {
-            controlUnit.add_if_max(collection);
+            collectionManager.add_if_max();
     }
 }

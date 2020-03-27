@@ -1,6 +1,6 @@
 package src.commands;
 
-import src.*;
+import src.io.Parse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Class of execute script command.
  */
-public class Command_execute_script implements Command {
+public class CommandExecuteScript implements Command {
     private Invoker invoker;
     private ArrayList<String> file_already_run;
 
@@ -18,7 +18,7 @@ public class Command_execute_script implements Command {
      * Constructor of execute script command.
      * @param invoker - class with HashMap of registered commands.
      */
-    public Command_execute_script(Invoker invoker) {
+    public CommandExecuteScript(Invoker invoker) {
         this.invoker = invoker;
         this.file_already_run = new ArrayList<>();
         this.current_depth = 0;
@@ -27,15 +27,14 @@ public class Command_execute_script implements Command {
     /**
      *
      * @param args - arguments from command line.
-     * @throws BadNumOfArgsException - throws exception, if method takes wrong
      * number of arguments.
      * @throws IOException - throws exception, if method don't have permission
      * to file or file not found.
      */
     @Override
-    public void execute(String... args) throws BadNumOfArgsException, IOException {
+    public void execute(String... args) throws IOException {
         if (args.length != 2) {
-            throw new BadNumOfArgsException();
+            System.err.println("Bad number of arguments!");
         } else if (max_recursion_depth == this.current_depth) {
             System.err.println("Maximum recursive depth reached!");
             System.err.println("Ignore execute script command!");

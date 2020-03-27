@@ -1,4 +1,4 @@
-package src;
+package src.io;
 
 import java.util.Scanner;
 
@@ -12,7 +12,7 @@ public class Client {
     /**
      * Constructor set user input.
      */
-    Client() {
+    public Client() {
         userInput = new Scanner(System.in);
     }
 

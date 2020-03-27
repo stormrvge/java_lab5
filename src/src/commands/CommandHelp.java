@@ -5,11 +5,11 @@ import src.*;
 /**
  * This class of help command. This class just call method from Control Unit.
  */
-public class Command_help implements Command {
-    private final ControlUnit controlUnit;
+public class CommandHelp implements Command {
+    private final CollectionManager collectionManager;
 
-    public Command_help(ControlUnit controlUnit) {
-        this.controlUnit = controlUnit;
+    public CommandHelp(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -18,6 +18,6 @@ public class Command_help implements Command {
      */
     @Override
     public void execute(String[] str) {
-        controlUnit.help();
+        collectionManager.help();
     }
 }

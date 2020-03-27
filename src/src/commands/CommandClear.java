@@ -5,13 +5,11 @@ import src.*;
 /**
  * This class of clear command. This class just call method from Control Unit.
  */
-public class Command_clear implements Command {
-    private ControlUnit controlUnit;
-    private Collection collection;
+public class CommandClear implements Command {
+    private CollectionManager collectionManager;
 
-    public Command_clear(ControlUnit controlUnit, Collection collection) {
-        this.controlUnit = controlUnit;
-        this.collection = collection;
+    public CommandClear(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -20,6 +18,6 @@ public class Command_clear implements Command {
      */
     @Override
     public void execute(String ... args) {
-        controlUnit.clear(collection);
+        collectionManager.clear();
     }
 }

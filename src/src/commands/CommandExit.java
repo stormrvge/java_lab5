@@ -5,12 +5,12 @@ import src.*;
 /**
  * This class of add_if_min command. This class just call method from Control Unit.
  */
-public class Command_exit implements Command {
-    private final ControlUnit controlUnit;
+public class CommandExit implements Command {
+    private final CollectionManager collectionManager;
     public static boolean isRunning = true;
 
-    public Command_exit(ControlUnit controlUnit) {
-        this.controlUnit = controlUnit;
+    public CommandExit(CollectionManager collectionManager) {
+        this.collectionManager = collectionManager;
     }
 
     /**
@@ -19,6 +19,6 @@ public class Command_exit implements Command {
      */
     @Override
     public void execute(String[] str) {
-        controlUnit.exit();
+        collectionManager.exit();
     }
 }

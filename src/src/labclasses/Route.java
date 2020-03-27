@@ -1,4 +1,8 @@
-package src;
+package src.labclasses;
+
+import src.commands.OutOfBoundsException;
+
+import java.time.format.DateTimeFormatter;
 
 /**
  * The general class in our collection. Collection contains elements of routes.
@@ -17,7 +21,7 @@ public class Route implements Comparable<Route> {
     /**
      * Default constructor for setters.
      */
-    Route() {}
+    public Route() {}
     Route(String name, Coordinates coordinates, Location from, Location to, float distance)
             throws NullPointerException, OutOfBoundsException {
         if (distance < 1) throw new OutOfBoundsException();
@@ -34,22 +38,11 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * This method returns string with fields of instance.
-     * @return - returns string.
-     */
-    @Override
-    public String toString() {
-        return ("ROUTE[id = " + id + ", name = " + name + ", Coordinates = " + coordinates +
-                ", creationDate = " + creationDate + ", from = " + from + ", to = " + to +
-                ", distance = " + distance);
-    }
-
-    /**
      * This method sets name of instance.
      * @param name - new name of instance.
      */
     public void setName(String name) {
-        if (name == null || name.equals("")) throw new NullPointerException("Name cant be null");
+        if (name == null || name.trim().equals("")) throw new NullPointerException("Name cant be null");
         this.name = name;
     }
 
@@ -158,5 +151,25 @@ public class Route implements Comparable<Route> {
         if (distance > route.getDistance()) return 1;
         else if (distance == route.getDistance()) return 0;
         else return  -1;
+    }
+
+    /**
+     * This method returns string with fields of instance.
+     * @return - returns string.
+     */
+    @Override
+    public String toString() {
+        if (to == null) {
+            return ("Route [id = " + id + ", name = " + name + ", coordinates = " + coordinates.toString() +
+                    ", creation date = " + creationDate.getYear() + "-"  + creationDate.getMonthValue() + "-" +
+                    creationDate.getDayOfMonth() + ", location from = " + from.toString() + ", location to = null"
+                    + ", distance = " + distance + "]");
+        }
+        else {
+            return ("Route [id = " + id + ", name = " + name + ", coordinates = " + coordinates.toString() +
+                    ", creation date = " + creationDate.getYear() + "-"  + creationDate.getMonthValue() + "-" +
+                    creationDate.getDayOfMonth() + ", location from = " + from.toString() + ", location to = " +
+                    to.toString() + ", distance = " + distance + "]");
+        }
     }
 }

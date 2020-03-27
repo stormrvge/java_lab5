@@ -1,17 +1,19 @@
 package src;
 
 import src.commands.*;
+import src.io.Client;
 
 public class Main {
     public static void main(String[] args) {
+        String path = System.getenv("lab5");
         Invoker invoker = new Invoker();
         Client input = new Client();
 
         registerCommands(invoker);
 
-        invoker.execute("load collection.json");
-        System.out.println("Collection loaded. Type \"help\" for list of available commands.");
-        while (Command_exit.isRunning) {
+        invoker.execute("load " + path);
+        System.out.println("Type \"help\" for list of available commands.");
+        while (CommandExit.isRunning) {
             input.readCommand();
             invoker.execute(input.getNextCommand());
         }
@@ -19,25 +21,24 @@ public class Main {
     }
 
     private static void registerCommands(Invoker invoker) {
-        ControlUnit e = new ControlUnit();
-        Collection collection = new Collection();
+        CollectionManager e = new CollectionManager();
 
-        invoker.register("help", new Command_help(e));
-        invoker.register("show", new Command_show(e, collection));
-        invoker.register("info", new Command_info(e, collection));
-        invoker.register("add", new Command_add(e, collection));
-        invoker.register("update", new Command_update_id(e, collection));
-        invoker.register("remove_by_id", new Command_remove_by_id(e, collection));
-        invoker.register("clear", new Command_clear(e, collection));
-        invoker.register("save", new Command_save(e, collection));
-        invoker.register("load", new Command_load(e, collection));
-        invoker.register("exit", new Command_exit(e));
-        invoker.register("execute_script", new Command_execute_script(invoker));
-        invoker.register("remove_at", new Command_remove_at(e, collection));
-        invoker.register("add_if_max", new Command_add_if_max(e, collection));
-        invoker.register("add_if_min", new Command_add_if_min(e, collection));
-        invoker.register("count_by_distance", new Command_count_by_distance(e, collection));
-        invoker.register("print_unique_distance", new Command_print_unique_distance(e, collection));
-        invoker.register("print_field_ascending_distance", new Command_print_field_ascending_distance(e, collection));
+        invoker.register("help", new CommandHelp(e));
+        invoker.register("show", new CommandShow(e));
+        invoker.register("info", new CommandInfo(e));
+        invoker.register("add", new CommandAdd(e));
+        invoker.register("update_id", new CommandUpdateId(e));
+        invoker.register("remove_by_id", new CommandRemoveById(e));
+        invoker.register("clear", new CommandClear(e));
+        invoker.register("save", new CommandSave(e));
+        invoker.register("load", new CommandLoad(e));
+        invoker.register("exit", new CommandExit(e));
+        invoker.register("execute_script", new CommandExecuteScript(invoker));
+        invoker.register("remove_at", new CommandRemoveAt(e));
+        invoker.register("add_if_max", new CommandAddIfMax(e));
+        invoker.register("add_if_min", new CommandAddIfMin(e));
+        invoker.register("count_by_distance", new CommandCountByDistance(e));
+        invoker.register("print_unique_distance", new CommandPrintUniqueDistance(e));
+        invoker.register("print_field_ascending_distance", new CommandPrintFieldAscendingDistance(e));
     }
 }

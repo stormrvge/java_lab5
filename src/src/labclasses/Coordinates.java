@@ -1,4 +1,6 @@
-package src;
+package src.labclasses;
+
+import src.commands.OutOfBoundsException;
 
 /**
  * Class with coordinates which we using in collection like field.
@@ -15,7 +17,7 @@ public class Coordinates {
      * @param y - Y coordinate.
      * @throws OutOfBoundsException - throws exception, if we out of X_MAXVALUE and Y_MINVALUE.
      */
-    Coordinates(Double x, double y) throws OutOfBoundsException {
+    public Coordinates(Double x, double y) throws OutOfBoundsException {
         if (x > X_MAXVALUE || y < Y_MINVALUE) throw new OutOfBoundsException();
 
         this.x = x;
@@ -52,5 +54,14 @@ public class Coordinates {
     public void setY(double y) throws OutOfBoundsException {
         if (y < Y_MINVALUE) throw new OutOfBoundsException();
         this.y = y;
+    }
+
+    /**
+     * This method returns values of instance in string.
+     * @return string with values of instance.
+     */
+    @Override
+    public String toString() {
+        return ("{x: " + x + ", y: " + y + "}");
     }
 }
